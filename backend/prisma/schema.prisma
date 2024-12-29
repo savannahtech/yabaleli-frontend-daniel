@@ -1,0 +1,49 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = "file:../database.sqlite"
+}
+
+model Game {
+  id        String   @id @default(cuid())
+  homeTeam  String
+  awayTeam  String
+  homeScore Int
+  awayScore Int
+  bets      Bet[]
+  startTime DateTime
+  Odds      Odds?
+}
+
+model Odds {
+  id     String @id @default(cuid())
+  home   Float
+  away   Float
+  draw   Float
+  gameId String @unique
+  Game   Game   @relation(fields: [gameId], references: [id])
+}
+
+model Bet {
+  id       String @id @default(cuid())
+  gameId   String
+  amount   Float
+  type     String
+  game     Game   @relation(fields: [gameId], references: [id])
+  username String
+}
+
+// enum BetType {
+//   home
+//   away
+//   draw
+// }
+
+model LeaderboardEntry {
+  id            String @id @default(cuid())
+  username      String
+  totalWinnings Float
+}
